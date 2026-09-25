@@ -1,22 +1,13 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-
-let mongoMemoryServer;
 
 const connectDB = async () => {
   try {
-    const mongoUri = process.env.MONGODB_URI;
-
-    if (mongoUri) {
-      await mongoose.connect(mongoUri);
-      console.log('MongoDB connected successfully');
-      return;
+    if (!process.env.MONGO_URI) {
+      throw new Error('MONGO_URI environment variable is not defined');
     }
 
-    mongoMemoryServer = await MongoMemoryServer.create();
-    const uri = mongoMemoryServer.getUri();
-    await mongoose.connect(uri);
-    console.log('MongoDB connected successfully using in-memory server');
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error.message);
     throw error;

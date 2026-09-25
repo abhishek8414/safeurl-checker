@@ -17,6 +17,12 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const frontendUrl = process.env.FRONTEND_URL;
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  ...(frontendUrl ? [frontendUrl] : []),
+];
 
 app.use(helmet({
   crossOriginResourcePolicy: false,
@@ -26,13 +32,13 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:', 'https:' ],
-      connectSrc: ["'self'", 'http://localhost:5173', 'http://localhost:5000']
+      connectSrc: ["'self'", ...allowedOrigins, 'http://localhost:5000']
     }
   }
 }));
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: allowedOrigins,
   credentials: true,
 }));
 
@@ -71,7 +77,7 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`SafeURL Checker server running on port ${PORT}`);
     });
   } catch (error) {

@@ -18,7 +18,7 @@ SafeURL Checker is a full-stack cybersecurity web app that helps users analyze w
 
 - Frontend: React + Vite
 - Backend: Node.js + Express
-- Database: MongoDB / MongoMemoryServer for local development
+- Database: MongoDB Atlas (configured with `MONGO_URI`)
 - Auth: JWT + bcrypt
 
 ## Project Structure
@@ -60,13 +60,14 @@ Copy the example file and add your own values:
 
 cp .env.example .env
 
-Example:
+Example `.env` values:
 
-MONGODB_URI=mongodb://localhost:27017/safeurl
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster-url>/safeurl?retryWrites=true&w=majority
 JWT_SECRET=replace_with_a_secure_secret
 PORT=5000
+FRONTEND_URL=http://localhost:5173
 
-For local development without MongoDB, the server can fall back to an in-memory MongoDB instance automatically.
+The backend requires a MongoDB connection. Set `MONGO_URI` to your MongoDB Atlas connection string. The server does not start an in-memory database.
 
 ### 3. Start the app
 
@@ -78,6 +79,10 @@ This starts:
 
 - Frontend: http://localhost:5173
 - Backend: http://localhost:5000
+
+### Deploy the backend on Render
+
+Create a Web Service using the `server` directory as the Root Directory. Set the Build Command to `npm install` and the Start Command to `node server.js`. Add `MONGO_URI` (your MongoDB Atlas connection string), `JWT_SECRET` (a strong random secret), and `FRONTEND_URL` (the deployed frontend URL) to the Render environment. Render provides `PORT` automatically.
 
 ## API Endpoints
 
