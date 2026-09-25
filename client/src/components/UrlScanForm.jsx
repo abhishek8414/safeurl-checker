@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 
 const UrlScanForm = ({ onScanComplete, initialValue = '' }) => {
   const [url, setUrl] = useState(initialValue);
   const [loading, setLoading] = useState(false);
+  const requestInFlightRef = useRef(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -15,6 +16,11 @@ const UrlScanForm = ({ onScanComplete, initialValue = '' }) => {
       return;
     }
 
+    if (loading || requestInFlightRef.current) {
+      return;
+    }
+
+    requestInFlightRef.current = true;
     setLoading(true);
 
     try {
@@ -25,6 +31,7 @@ const UrlScanForm = ({ onScanComplete, initialValue = '' }) => {
       const message = error.response?.data?.message || 'Unable to scan URL.';
       toast.error(message);
     } finally {
+      requestInFlightRef.current = false;
       setLoading(false);
     }
   };

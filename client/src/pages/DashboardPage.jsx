@@ -65,11 +65,8 @@ const DashboardPage = () => {
     }
   };
 
-  const handleScanComplete = async (payload) => {
+  const handleScanComplete = async () => {
     await fetchScans();
-    if (payload?.scan) {
-      setScans((prev) => [payload.scan, ...prev]);
-    }
   };
 
   return (
